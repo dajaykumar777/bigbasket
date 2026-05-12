@@ -1,0 +1,81 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ── Helpers ──────────────────────────────────────────────
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    // Admin: signed in with @shopapp.internal AND has a doc in admins/{uid}.
+    function isAdmin() {
+      return isSignedIn()
+        && request.auth.token.email != null
+        && request.auth.token.email.matches('.*@shopapp\\.internal$')
+        && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+
+    // Shop user: signed in with @shopapp.internal but NOT in the admins collection.
+    function isShopUser() {
+      return isSignedIn()
+        && request.auth.token.email != null
+        && request.auth.token.email.matches('.*@shopapp\\.internal$')
+        && !exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+
+    // ── cashOuts collection ──────────────────────────────────
+    // Staff create their own; admin reads all; no edits/deletes.
+    match /cashOuts/{docId} {
+      allow read: if isAdmin()
+        || (isShopUser() && resource.data.submittedBy == request.auth.uid);
+      allow create: if isShopUser()
+        && request.resource.data.submittedBy == request.auth.uid;
+      allow update, delete: if false;
+    }
+
+    // ── admins collection ────────────────────────────────────
+    // Any signed-in user can read their own doc (needed so isAdmin() exists()
+    // check doesn't create a circular dependency in rules evaluation).
+    match /admins/{uid} {
+      allow read: if isSignedIn();
+      // Only bb_admin can write their own admin document (used by the setup script).
+      allow write: if isSignedIn()
+        && request.auth.token.email == 'bb_admin@shopapp.internal'
+        && request.auth.uid == uid;
+    }
+
+    // ── users collection ─────────────────────────────────────
+    // Keyed by Firebase Auth UID.
+    match /users/{userId} {
+      allow read: if isAdmin()
+        || (isSignedIn() && request.auth.uid == userId);
+      allow create: if isAdmin();
+      allow update: if isAdmin();
+      // Soft-delete only (status: 'deleted'). Never hard-delete from the app.
+      allow delete: if false;
+    }
+
+    // ── invoices collection ──────────────────────────────────
+    match /invoices/{invoiceId} {
+      allow read: if isAdmin()
+        || (isShopUser() && resource.data.createdBy == request.auth.uid);
+      allow create: if isShopUser()
+        && request.resource.data.createdBy == request.auth.uid
+        && request.resource.data.vendorName is string
+        && request.resource.data.vendorName.size() > 0
+        && request.resource.data.total is number;
+      allow update: if isShopUser() && resource.data.createdBy == request.auth.uid;
+      allow delete: if isAdmin();
+    }
+
+    // ── auditLogs collection ─────────────────────────────────
+    // Allow unauthenticated creates so failed-login events can be recorded.
+    // Documents are append-only and only readable by admins.
+    match /auditLogs/{logId} {
+      allow read: if isAdmin();
+      allow create: if true;
+      allow update, delete: if false;
+    }
+  }
+}

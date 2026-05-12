@@ -1,0 +1,21 @@
+# Dependencies
+node_modules/
+
+# Build output
+frontend/dist/
+
+# Firebase cache
+.firebase/
+
+# Environment / secrets
+frontend/.env
+frontend/.env.local
+frontend/.env.*.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+*.swp

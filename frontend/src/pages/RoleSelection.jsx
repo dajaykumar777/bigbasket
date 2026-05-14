@@ -13,30 +13,17 @@ export default function RoleSelection() {
 
   return (
     <div className="home-page">
-      {/* Left panel – branding */}
-      <div className="home-panel home-panel--brand">
+      <div className="home-center">
+        {/* Branding */}
         <div className="home-brand">
           <div className="home-brand__icon">🧾</div>
           <h1 className="home-brand__name">Big Basket Shop</h1>
           <p className="home-brand__tagline">Invoice &amp; Cash Management</p>
         </div>
 
-        <ul className="home-features">
-          <li><span>📤</span> Upload invoices via photo or manual entry</li>
-          <li><span>💰</span> End-of-day cash &amp; card reconciliation</li>
-          <li><span>📊</span> Admin dashboard with real-time totals</li>
-          <li><span>📋</span> Full audit trail of all actions</li>
-        </ul>
-
-        <p className="home-copy">&copy; {new Date().getFullYear()} Big Basket Shop</p>
-      </div>
-
-      {/* Right panel – login options */}
-      <div className="home-panel home-panel--login">
+        {/* Login options */}
         <div className="home-login-card">
-          <h2 className="home-login-card__title">Welcome back</h2>
           <p className="home-login-card__sub">Sign in to your account</p>
-
           <div className="home-login-options">
             <button
               className="home-login-btn home-login-btn--admin"
@@ -63,6 +50,8 @@ export default function RoleSelection() {
             </button>
           </div>
         </div>
+
+        <p className="home-copy">&copy; {new Date().getFullYear()} Big Basket Shop</p>
       </div>
     </div>
   );

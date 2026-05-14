@@ -3,6 +3,16 @@
    Plain CSS · Inter font · no frameworks
    ═══════════════════════════════════════════════════════════ */
 
+/* ── Page transition keyframes ────────────────────────────── */
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(20px) scale(.98); }
+  to   { opacity: 1; transform: translateY(0)    scale(1);   }
+}
+@keyframes fadeSlideOut {
+  from { opacity: 1; transform: scale(1); }
+  to   { opacity: 0; transform: scale(.96); }
+}
+
 /* ── CSS Variables ────────────────────────────────────────── */
 :root {
   /* Brand colours */
@@ -1038,42 +1048,53 @@ input, select, textarea { font-family: inherit; font-size: 0.95rem; }
    HOME / ROLE SELECTION PAGE
    ═══════════════════════════════════════════════════════════ */
 
+/* ── Homepage – single centred layout ─────────────────────── */
 .home-page {
   min-height: 100vh;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-}
-
-/* ─ Left brand panel ─ */
-.home-panel--brand {
-  background: linear-gradient(155deg, var(--indigo-deep) 0%, #1e1b4b 60%, #0d0b26 100%);
-  padding: 56px 48px;
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(155deg, #1e1b4b 0%, #312e81 45%, #0d0b26 100%);
+  padding: 40px 24px;
   position: relative;
   overflow: hidden;
 }
-/* Decorative circles */
-.home-panel--brand::before,
-.home-panel--brand::after {
+/* Subtle decorative circles */
+.home-page::before,
+.home-page::after {
   content: '';
   position: absolute;
   border-radius: 50%;
-  opacity: .08;
+  opacity: .06;
   background: var(--white);
+  pointer-events: none;
 }
-.home-panel--brand::before { width: 400px; height: 400px; top: -120px; right: -100px; }
-.home-panel--brand::after  { width: 250px; height: 250px; bottom: -60px; left: -80px; }
+.home-page::before { width: 600px; height: 600px; top: -200px; right: -150px; }
+.home-page::after  { width: 380px; height: 380px; bottom: -120px; left: -100px; }
 
+.home-center {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 40px;
+  width: 100%;
+  max-width: 440px;
+}
+
+/* Branding */
+.home-brand {
+  text-align: center;
+}
 .home-brand__icon {
-  font-size: 3rem;
-  margin-bottom: 16px;
+  font-size: 3.2rem;
   display: block;
-  filter: drop-shadow(0 4px 12px rgba(255,255,255,.15));
+  margin-bottom: 14px;
+  filter: drop-shadow(0 4px 16px rgba(255,255,255,.2));
 }
 .home-brand__name {
-  font-size: 2rem;
+  font-size: 2.2rem;
   font-weight: 800;
   color: var(--white);
   letter-spacing: -.04em;
@@ -1082,107 +1103,68 @@ input, select, textarea { font-family: inherit; font-size: 0.95rem; }
 }
 .home-brand__tagline {
   font-size: 0.95rem;
-  color: rgba(255,255,255,.55);
+  color: rgba(255,255,255,.5);
   font-weight: 500;
-  letter-spacing: .02em;
+  letter-spacing: .03em;
 }
 
-.home-features {
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  margin: 0;
-  padding: 0;
-  position: relative;
-  z-index: 1;
-}
-.home-features li {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  color: rgba(255,255,255,.75);
-  font-size: 0.9rem;
-  font-weight: 500;
-}
-.home-features li span {
-  font-size: 1.2rem;
-  width: 28px;
-  text-align: center;
-  flex-shrink: 0;
-}
-
-.home-copy {
-  color: rgba(255,255,255,.3);
-  font-size: 0.78rem;
-  position: relative;
-  z-index: 1;
-}
-
-/* ─ Right login panel ─ */
-.home-panel--login {
-  background: var(--gray-50);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 48px 40px;
-}
-
+/* Card */
 .home-login-card {
   width: 100%;
-  max-width: 380px;
-}
-
-.home-login-card__title {
-  font-size: 1.7rem;
-  font-weight: 800;
-  color: var(--gray-900);
-  letter-spacing: -.04em;
-  margin-bottom: 6px;
+  background: rgba(255,255,255,.05);
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: var(--radius-lg, 16px);
+  padding: 32px 28px;
+  backdrop-filter: blur(12px);
 }
 .home-login-card__sub {
-  color: var(--gray-500);
-  font-size: 0.9rem;
-  margin-bottom: 32px;
+  color: rgba(255,255,255,.45);
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  margin-bottom: 20px;
+  text-align: center;
 }
 
 .home-login-options {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 12px;
 }
 
 .home-login-btn {
   display: flex;
   align-items: center;
   gap: 16px;
-  padding: 18px 20px;
+  padding: 16px 18px;
   border-radius: var(--radius);
-  border: 1.5px solid var(--gray-200);
-  background: var(--white);
+  border: 1.5px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.07);
   text-align: left;
   cursor: pointer;
   width: 100%;
-  transition: border-color var(--transition), box-shadow var(--transition), transform var(--transition), background var(--transition);
-  box-shadow: var(--shadow-sm);
+  transition: border-color var(--transition), background var(--transition), transform var(--transition), box-shadow var(--transition);
 }
-.home-login-btn:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
-
-.home-login-btn--admin:hover { border-color: var(--indigo); background: var(--indigo-light); }
-.home-login-btn--staff:hover { border-color: var(--green);  background: var(--green-light); }
+.home-login-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,.3);
+}
+.home-login-btn--admin:hover { border-color: var(--indigo); background: rgba(79,70,229,.25); }
+.home-login-btn--staff:hover { border-color: var(--green);  background: rgba(16,185,129,.18); }
 
 .home-login-btn__icon-wrap {
-  font-size: 1.6rem;
-  width: 48px;
-  height: 48px;
+  font-size: 1.5rem;
+  width: 46px;
+  height: 46px;
   border-radius: var(--radius-sm);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
 }
-.home-login-btn--admin .home-login-btn__icon-wrap { background: var(--indigo-light); }
-.home-login-btn--staff .home-login-btn__icon-wrap { background: var(--green-light); }
+.home-login-btn--admin .home-login-btn__icon-wrap { background: rgba(79,70,229,.3); }
+.home-login-btn--staff .home-login-btn__icon-wrap { background: rgba(16,185,129,.2); }
 
 .home-login-btn__text {
   flex: 1;
@@ -1193,24 +1175,28 @@ input, select, textarea { font-family: inherit; font-size: 0.95rem; }
 .home-login-btn__text strong {
   font-size: 0.95rem;
   font-weight: 700;
-  color: var(--gray-900);
+  color: var(--white);
 }
 .home-login-btn__text span {
   font-size: 0.8rem;
-  color: var(--gray-500);
+  color: rgba(255,255,255,.5);
 }
 
 .home-login-btn__arrow {
-  color: var(--gray-300);
+  color: rgba(255,255,255,.3);
   font-size: 1.1rem;
   transition: color var(--transition), transform var(--transition);
 }
-.home-login-btn:hover .home-login-btn__arrow { color: var(--gray-600); transform: translateX(3px); }
+.home-login-btn:hover .home-login-btn__arrow { color: rgba(255,255,255,.8); transform: translateX(3px); }
 
-/* Responsive: stack panels on small screens */
+.home-copy {
+  color: rgba(255,255,255,.2);
+  font-size: 0.75rem;
+  text-align: center;
+}
+
+/* Responsive */
 @media (max-width: 768px) {
-  .home-page { grid-template-columns: 1fr; }
-  .home-panel--brand { padding: 40px 28px; min-height: auto; }
-  .home-panel--login { padding: 36px 24px; }
-  .home-brand__name  { font-size: 1.6rem; }
+  .home-brand__name  { font-size: 1.8rem; }
+  .home-login-card   { padding: 24px 20px; }
 }

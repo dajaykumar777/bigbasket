@@ -82,12 +82,15 @@ export default function UserManagement() {
 
   function openEditModal(user) {
     setEditUser(user);
+    // Strip the +44 prefix to get just the 10-digit local part for editing
+    const stored = user.phone || '';
+    const phone = stored.startsWith('+44') ? stored.slice(3) : stored;
     setForm({
       fullName: user.fullName || '',
       username: user.username || '',
       pin: '', confirmPin: '',
       shopName: user.shopName || '',
-      phone: user.phone || '',
+      phone,
       status: user.status || 'active',
     });
     setFormErrors({});
@@ -110,7 +113,11 @@ export default function UserManagement() {
     const errs = {};
     if (!form.fullName.trim()) errs.fullName = 'Full name is required.';
     if (!form.shopName.trim()) errs.shopName = 'Shop name is required.';
-    if (!form.phone.trim())    errs.phone    = 'Phone number is required.';
+    if (!form.phone.trim()) {
+      errs.phone = 'Phone number is required.';
+    } else if (!/^7\d{9}$/.test(form.phone.trim())) {
+      errs.phone = 'Enter a valid UK mobile: 10 digits starting with 7 (e.g. 7700900000).';
+    }
     if (!editUser) {
       if (!form.username.trim()) errs.username = 'Username is required.';
       if (!/^[a-z0-9_]{3,20}$/.test(form.username.trim().toLowerCase()))
@@ -146,8 +153,7 @@ export default function UserManagement() {
         fullName:  form.fullName.trim(),
         username:  cleanUsername,
         shopName:  form.shopName.trim(),
-        phone:     form.phone.trim(),
-        status:    'active',
+        phone:     '+44' + form.phone.trim(),
         createdBy: currentUser.uid,
         createdAt: serverTimestamp(),
       });
@@ -177,7 +183,7 @@ export default function UserManagement() {
     await updateDoc(userRef, {
       fullName:  form.fullName.trim(),
       shopName:  form.shopName.trim(),
-      phone:     form.phone.trim(),
+      phone:     '+44' + form.phone.trim(),
       status:    form.status,
       updatedAt: serverTimestamp(),
       updatedBy: currentUser.uid,
@@ -393,7 +399,21 @@ export default function UserManagement() {
                 </div>
                 <div className="form-group">
                   <label>Phone Number *</label>
-                  <input name="phone" value={form.phone} onChange={handleField} placeholder="+91 99999 99999" type="tel" />
+                  <div className="phone-input-row">
+                    <span className="phone-prefix">+44</span>
+                    <input
+                      name="phone"
+                      value={form.phone}
+                      onChange={(e) => {
+                        const val = e.target.value.replace(/\D/g, '').slice(0, 10);
+                        handleField({ target: { name: 'phone', value: val } });
+                      }}
+                      placeholder="7700900000"
+                      type="tel"
+                      inputMode="numeric"
+                      maxLength={10}
+                    />
+                  </div>
                   {formErrors.phone && <span className="field-error">{formErrors.phone}</span>}
                 </div>
               </div>

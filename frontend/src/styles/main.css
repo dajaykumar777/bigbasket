@@ -358,6 +358,27 @@ input, select, textarea { font-family: inherit; font-size: 0.95rem; }
 }
 .form-group--narrow { max-width: 160px; }
 
+/* Phone number: fixed +44 prefix + number input side by side */
+.phone-input-row { display: flex; }
+.phone-prefix {
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  background: var(--gray-100);
+  border: 1.5px solid var(--gray-200);
+  border-right: none;
+  border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--gray-600);
+  white-space: nowrap;
+  user-select: none;
+}
+.phone-input-row input {
+  flex: 1;
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0 !important;
+}
+
 .form-row   { display: grid; grid-template-columns: 1fr 1fr;       gap: 16px; }
 .form-row--3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
 

@@ -113,7 +113,7 @@ export default function AdminLogin() {
                 onClick={() => setShowPin((v) => !v)}
                 aria-label={showPin ? 'Hide PIN' : 'Show PIN'}
               >
-                {showPin ? '🙈' : '👁'}
+                {showPin ? '🙈' : '👁️'}
               </button>
             </div>
           </div>

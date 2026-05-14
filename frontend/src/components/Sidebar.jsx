@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import ThemeToggle from './ThemeToggle';
 
 // Nav item definitions per role
 const ADMIN_LINKS = [
@@ -56,6 +57,10 @@ export default function Sidebar({ activePath }) {
           </Link>
         ))}
       </nav>
+
+      <div className="sidebar__theme">
+        <ThemeToggle compact />
+      </div>
 
       {shopLabel && (
         <div className="sidebar__user-info">
